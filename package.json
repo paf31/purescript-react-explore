@@ -1,0 +1,11 @@
+{
+  "name": "purescript-comonad-ui",
+  "files": [],
+  "scripts": {
+    "build": "pulp browserify --to html/index.js"
+  },
+  "dependencies": {
+    "react": "^0.14.8",
+    "react-dom": "^0.14.6"
+  }
+}
