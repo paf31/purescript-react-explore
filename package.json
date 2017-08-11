@@ -5,7 +5,8 @@
     "build": "pulp browserify --to html/index.js"
   },
   "dependencies": {
-    "react": "^0.14.8",
-    "react-dom": "^0.14.6"
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "create-react-class": "^15.6.0"
   }
 }
