@@ -26,7 +26,6 @@ import Data.Identity (Identity)
 import Data.Lazy (Lazy, defer, force)
 import Data.Maybe (fromJust)
 import Data.Monoid.Additive (Additive(..))
-import Data.Nullable (toMaybe)
 import Data.Tuple (Tuple(..))
 import Data.Unit (Unit, unit)
 import Partial.Unsafe (unsafePartial)
@@ -137,7 +136,8 @@ cofreeExample = iterCofree 0 step where
 -- |
 -- | This is a bit like taking the smash product of pointed topological spaces.
 combine :: forall w1 w2
-         . (Comonad w1, Comonad w2)
+         . Comonad w1
+        => Comonad w2
         => (forall a. UI a -> UI a -> UI a)
         -> Component w1
         -> Component w2
@@ -149,10 +149,10 @@ combine with = day build where
 
 -- Helper functions
 
-introCoDay1 :: forall w w' a. (Functor w, Comonad w') => Co w a -> Co (Day w w') a
+introCoDay1 :: forall w w' a. Functor w => Comonad w' => Co w a -> Co (Day w w') a
 introCoDay1 a = co (runDay \f w w' -> runCo a (map (_ `f` extract w') w))
 
-introCoDay2 :: forall w w' a. (Functor w, Comonad w') => Co w a -> Co (Day w' w) a
+introCoDay2 :: forall w w' a. Functor w => Comonad w' => Co w a -> Co (Day w' w) a
 introCoDay2 a = co (runDay \f w' w -> runCo a (map (f (extract w')) w))
 
 -- I have no idea what's going on here.
@@ -187,4 +187,4 @@ main = void (elm' >>= render ui)
     win <- window
     doc <- document win
     elm <- getElementById (ElementId "example") (documentToNonElementParentNode (htmlDocumentToDocument doc))
-    pure $ unsafePartial fromJust (toMaybe elm)
+    pure $ unsafePartial fromJust elm
