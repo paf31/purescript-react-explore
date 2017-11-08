@@ -6,6 +6,11 @@
     "bower_components",
     "output"
   ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/paf31/purescript-react-explore.git"
+  },
   "dependencies": {
     "purescript-day": "^9.0.0",
     "purescript-pairing": "^4.0.0",
