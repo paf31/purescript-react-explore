@@ -1,7 +1,7 @@
 # purescript-react-explore
 
 Experiments with comonads for modelling React UIs, based on the paper
-[Declarative UIs are the Future --- And the Future is Comonadic!](http://functorial.com/the-future-is-comonadic/main.pdf).
+[Declarative UIs are the Future - And the Future is Comonadic!](http://functorial.com/the-future-is-comonadic/main.pdf).
 
 - [Module Documentation](generated-docs/React/)
 - [Example](test/Main.purs)
