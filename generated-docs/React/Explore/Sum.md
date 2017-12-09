@@ -18,6 +18,14 @@ the other using the `moveLeft` and `moveRight` actions.
 (Comonad f, Comonad g) => Comonad (Sum f g)
 ```
 
+#### `combine`
+
+``` purescript
+combine :: forall w1 w2. Comonad w1 => Comonad w2 => Component w1 -> Component w2 -> Component (Sum w1 w2)
+```
+
+Combine two components, starting in the left state.
+
 #### `moveLeft`
 
 ``` purescript
@@ -49,13 +57,5 @@ liftRight :: forall f g a. Co g a -> Co (Sum f g) a
 ```
 
 Lift an action to act on the right state.
-
-#### `combine`
-
-``` purescript
-combine :: forall w1 w2. Comonad w1 => Comonad w2 => Component w1 -> Component w2 -> Component (Sum w1 w2)
-```
-
-Combine two components, starting in the left state.
 
 

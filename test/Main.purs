@@ -7,6 +7,7 @@ import React.DOM as D
 import React.DOM.Props as P
 import React.Explore (Component, UI, explore)
 import React.Explore.Sum as Sum
+import React.Explore.List as List
 import Control.Comonad.Cofree (Cofree, mkCofree, head, tail)
 import Control.Comonad.Store (StoreT, store)
 import Control.Comonad.Traced (TracedT, traced)
@@ -95,13 +96,13 @@ cofreeExample = iterCofree 0 step where
 main :: forall eff. Eff (dom :: DOM | eff) Unit
 main = void (elm' >>= render ui) where
   together = map addControls
-    (storeExample `Sum.combine` tracedExample `Sum.combine` cofreeExample)
+    (stores `Sum.combine` tracedExample `Sum.combine` cofreeExample)
 
   addControls render send =
     D.div' [ D.p' [ D.a [ P.onClick \_ -> send (Sum.moveLeft *> Sum.liftLeft Sum.moveLeft)
                         , P.href "#"
                         ]
-                        [ D.text "Store example"
+                        [ D.text "Stores example"
                         ]
                   , D.text " — "
                   , D.a [ P.onClick \_ -> send (Sum.moveLeft *> Sum.liftLeft Sum.moveRight)
@@ -118,6 +119,17 @@ main = void (elm' >>= render ui) where
                   ]
            , render send
            ]
+
+  stores = map withButton (List.listOf D.div' storeExample) where
+    withButton render send =
+      D.div' [ D.p' [ D.a [ P.onClick \_ -> send List.push
+                          , P.href "#"
+                          ]
+                          [ D.text "Add Store"
+                          ]
+                    ]
+             , render send
+             ]
 
   ui :: ReactElement
   ui = D.div' [ createFactory (explore together) {} ]
