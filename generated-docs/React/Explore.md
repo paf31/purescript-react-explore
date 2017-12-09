@@ -8,7 +8,7 @@ correspond to different UI patterns:
   and a function taking each state to a user interface.
 - The Traced comonad corresponds to something like an incremental game,
   where we have a state for every value in some monoid.
-- Mealy machines are more like the Elm architecture, where we respond to
+- Moore machines are more like the Elm architecture, where we respond to
   input events, and update some internal state.
 - A cofree comonad is a bit like Halogen. We have some functor which
   describes the transitions to new states, but which can also respond
@@ -21,7 +21,7 @@ connected to the user interface. For example:
   read and write the stored state.
 - `Co (Traced w)` is isomorphic to `Writer`, so we can use `tell` to append some monoidal
   value to our state.
-- `Mealy action` is `Cofree (Function action)`, so `Co (Mealy action)` is isomorphic to
+- `Moore action` is `Cofree (Function action)`, so `Co (Moore action)` is isomorphic to
   `Free (Tuple action)`. We can emit zero or more actions in response to
   each user event.
 - `Co (Cofree f)` is isomorphic to `Free g` whenever `f` pairs with `g`. This
