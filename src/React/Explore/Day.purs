@@ -6,10 +6,10 @@ module React.Explore.Day
   ) where
 
 import Prelude
-import React.Explore (Component, UI)
 import Control.Comonad (class Comonad, extract)
 import Data.Functor.Day (Day, day, runDay) as Day
 import Data.Functor.Pairing.Co (Co, co, runCo)
+import React.Explore (Component, UI)
 
 -- | To combine two components, we can take the Day convolution of their state
 -- | spaces.

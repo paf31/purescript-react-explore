@@ -64,7 +64,7 @@ listOf :: forall w
        => (Array ReactElement -> ReactElement)
        -> Component w
        -> Component (List w)
-listOf render c = (render <<< _) <$> build id where
+listOf render c = (render <<< _) <$> build identity where
   build :: (List w ~> List w) -> List w (Handler (Co (List w) Unit) -> Array ReactElement)
   build f =
     List

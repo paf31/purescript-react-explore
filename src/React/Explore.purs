@@ -29,19 +29,12 @@ module React.Explore where
 import Prelude
 
 import Control.Comonad (class Comonad, extend, extract)
-import Control.Monad.Eff (Eff)
 import Data.Functor.Pairing.Co (Co, runCo)
+import Effect (Effect)
 import React as R
 
--- | A handy type synonym for tidying up some type signatures.
-type ReactEff state refs =
-  ( state :: R.ReactState state
-  , props :: R.ReactProps
-  , refs :: R.ReactRefs refs
-  )
-
 -- | A `Handler` takes an action and modifies the React component state.
-type Handler a = a -> Eff (ReactEff R.ReadWrite R.ReadOnly) Unit
+type Handler a = a -> Effect Unit
 
 -- | A UI, which is parameterized by its type of actions. For the purposes of
 -- | this implementation, a `UI` is just a `ReactElement` which takes its event
@@ -57,12 +50,13 @@ type Component w = w (UI (Co w Unit))
 -- |
 -- | This function creates a `ReactClass` which can be rendered using React.
 -- | See the test project for an example.
-explore :: forall w props. Comonad w => Component w -> R.ReactClass props
-explore space = R.createClass (R.spec space render) where
-  render :: R.ReactThis props (w (UI (Co w Unit)))
-         -> Eff (ReactEff R.ReadOnly ()) R.ReactElement
-  render this = do
-    state <- R.readState this
-    let send :: Co w Unit -> Eff (ReactEff R.ReadWrite R.ReadOnly) Unit
-        send m = R.transformState this (runCo m <<< extend const)
-    pure (extract state send)
+explore :: forall w props. Comonad w => Component w -> R.ReactClass {| props }
+explore space = 
+  R.pureComponent "ReactExplore" \this -> 
+    pure { state: { space }
+         , render: do
+             { space: state } <- R.getState this
+             let send :: Co w Unit -> Effect Unit
+                 send m = R.modifyState this \_ -> { space: runCo m (extend const state) }
+             pure (extract state send)
+         }
