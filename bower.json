@@ -12,11 +12,11 @@
     "url": "git://github.com/paf31/purescript-react-explore.git"
   },
   "dependencies": {
-    "purescript-day": "^9.0.0",
-    "purescript-pairing": "^4.0.0",
-    "purescript-react": "^4.0.0"
+    "purescript-day": "^10.0.0",
+    "purescript-react": "^6.0.0"
   },
   "devDependencies": {
-    "purescript-react-dom": "^4.1.0"
+    "purescript-web-html": "^1.0.0",
+    "purescript-react-dom": "^6.0.0"
   }
 }

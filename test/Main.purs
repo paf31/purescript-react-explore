@@ -2,32 +2,30 @@ module Test.Main where
 
 import Prelude
 
-import React (ReactElement, createFactory)
-import React.DOM as D
-import React.DOM.Props as P
-import React.Explore (Component, UI, explore)
-import React.Explore.Sum as Sum
-import React.Explore.List as List
 import Control.Comonad.Cofree (Cofree, mkCofree, head, tail)
 import Control.Comonad.Store (StoreT, store)
 import Control.Comonad.Traced (TracedT, traced)
-import Control.Monad.Eff (Eff)
 import Control.Monad.State (modify)
 import Control.Monad.Writer (tell)
-import DOM (DOM)
-import DOM.HTML (window)
-import DOM.HTML.Types (htmlDocumentToDocument)
-import DOM.HTML.Window (document)
-import DOM.Node.NonElementParentNode (getElementById)
-import DOM.Node.Types (Element, ElementId(..), documentToNonElementParentNode)
 import Data.Functor.Pairing.Co (Co, co)
 import Data.Identity (Identity)
 import Data.Lazy (Lazy, defer, force)
 import Data.Maybe (fromJust)
 import Data.Monoid.Additive (Additive(..))
 import Data.Tuple (Tuple(..))
+import Effect (Effect)
 import Partial.Unsafe (unsafePartial)
+import React (ReactElement, unsafeCreateLeafElement)
+import React.DOM as D
+import React.DOM.Props as P
+import React.Explore (Component, UI, explore)
+import React.Explore.List as List
+import React.Explore.Sum as Sum
 import ReactDOM (render)
+import Web.HTML.HTMLDocument (toNonElementParentNode)
+import Web.DOM.NonElementParentNode (getElementById)
+import Web.HTML (window)
+import Web.HTML.Window (document)
 
 -- | A counter component implemented using the `Store` comonad.
 storeExample :: Component (StoreT Int Identity)
@@ -36,12 +34,12 @@ storeExample = store render 0 where
   render count send =
     D.div' [ D.p' [ D.text ("State: " <> show count) ]
            , D.button [ P.onClick \_ ->
-                         send (modify (add 1))
+                         send (void (modify (add 1)))
                       ]
                       [ D.text "Increment"
                       ]
            , D.button [ P.onClick \_ ->
-                         send (modify (_ `sub` 1))
+                         send (void (modify (_ `sub` 1)))
                       ]
                       [ D.text "Decrement"
                       ]
@@ -93,7 +91,7 @@ cofreeExample = iterCofree 0 step where
                         ]
              ]
 
-main :: forall eff. Eff (dom :: DOM | eff) Unit
+main :: Effect Unit
 main = void (elm' >>= render ui) where
   together = map addControls
     (stores `Sum.combine` tracedExample `Sum.combine` cofreeExample)
@@ -132,11 +130,11 @@ main = void (elm' >>= render ui) where
              ]
 
   ui :: ReactElement
-  ui = D.div' [ createFactory (explore together) {} ]
+  ui = D.div' [ unsafeCreateLeafElement (explore together) {} ]
 
-  elm' :: Eff (dom :: DOM | eff) Element
+  elm' :: Effect _
   elm' = do
     win <- window
     doc <- document win
-    elm <- getElementById (ElementId "example") (documentToNonElementParentNode (htmlDocumentToDocument doc))
+    elm <- getElementById "example" (toNonElementParentNode doc)
     pure $ unsafePartial fromJust elm

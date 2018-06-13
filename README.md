@@ -3,7 +3,7 @@
 Experiments with comonads for modelling React UIs, based on the paper
 [Declarative UIs are the Future - And the Future is Comonadic!](https://github.com/paf31/the-future-is-comonadic/).
 
-- [Module Documentation](generated-docs/React/)
+- [Module Documentation](https://pursuit.purescript.org/packages/purescript-react-explore)
 - [Example](test/Main.purs)
 
 Relevant blog posts:
