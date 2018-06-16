@@ -2,9 +2,10 @@ module Test.Main where
 
 import Prelude
 
-import Control.Comonad.Cofree (Cofree, mkCofree, head, tail)
+import Control.Comonad.Cofree (Cofree, buildCofree)
 import Control.Comonad.Store (StoreT, store)
 import Control.Comonad.Traced (TracedT, traced)
+import Control.Monad.Free.Class (wrapFree)
 import Control.Monad.State (modify)
 import Control.Monad.Writer (tell)
 import Data.Functor.Pairing.Co (Co, co)
@@ -70,14 +71,9 @@ tracedExample = traced render where
 
 -- | A counter component implemented using a `Cofree` comonad.
 cofreeExample :: Component (Cofree Lazy)
-cofreeExample = iterCofree 0 step where
-  moveRight :: Co (Cofree Lazy) Unit
-  moveRight = co \x -> head (force (tail x)) unit
-
-  iterCofree :: forall a s f. Functor f => s -> (s -> Tuple a (f s)) -> Cofree f a
-  iterCofree s f =
-    case f s of
-      Tuple a fs -> mkCofree a (map (_ `iterCofree` f) fs)
+cofreeExample = buildCofree step 0 where
+  moveRight :: Co Lazy Unit
+  moveRight = co \a -> force a unit
 
   step :: Int -> Tuple (UI (Co (Cofree Lazy) Unit)) (Lazy Int)
   step count = Tuple ui (defer \_ -> add count 1) where
@@ -85,7 +81,7 @@ cofreeExample = iterCofree 0 step where
     ui send =
       D.div' [ D.p' [ D.text ("State: " <> show count) ]
              , D.button [ P.onClick \_ ->
-                            send moveRight
+                            send (wrapFree (moveRight $> pure unit))
                         ]
                         [ D.text "Increment"
                         ]
@@ -132,7 +128,6 @@ main = void (elm' >>= render ui) where
   ui :: ReactElement
   ui = D.div' [ unsafeCreateLeafElement (explore together) {} ]
 
-  elm' :: Effect _
   elm' = do
     win <- window
     doc <- document win

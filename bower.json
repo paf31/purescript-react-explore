@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "purescript-day": "^10.0.0",
+    "purescript-pairing": "^5.1.0",
     "purescript-react": "^6.0.0"
   },
   "devDependencies": {
